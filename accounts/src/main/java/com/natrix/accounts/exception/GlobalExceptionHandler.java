@@ -23,8 +23,8 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
-                                                                            HttpHeaders headers, HttpStatusCode status,
-                                                                            WebRequest request) {
+                                                                           HttpHeaders headers, HttpStatusCode status,
+                                                                           WebRequest request) {
 
         Map<String, String> errors = new HashMap<>();
         List<ObjectError> errorList = ex.getBindingResult().getAllErrors();
@@ -43,8 +43,9 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                                                                   WebRequest webRequest) {
 
         ErrorResponseDto errorResponseDto = new ErrorResponseDto(
-                webRequest.getDescription(false),
-                HttpStatus.INTERNAL_SERVER_ERROR,
+                webRequest.getDescription(true),
+                HttpStatus.INTERNAL_SERVER_ERROR.name(),
+                HttpStatus.INTERNAL_SERVER_ERROR.value(),
                 exception.getMessage(),
                 LocalDateTime.now()
         );
@@ -56,8 +57,9 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                                                                             WebRequest webRequest) {
 
         ErrorResponseDto errorResponseDTO = new ErrorResponseDto(
-                webRequest.getDescription(false),
-                HttpStatus.NOT_FOUND,
+                webRequest.getDescription(true),
+                HttpStatus.NOT_FOUND.name(),
+                HttpStatus.NOT_FOUND.value(),
                 exception.getMessage(),
                 LocalDateTime.now()
         );
@@ -69,8 +71,9 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                                                                                  WebRequest webRequest) {
 
         ErrorResponseDto errorResponseDTO = new ErrorResponseDto(
-                webRequest.getDescription(false),
-                HttpStatus.BAD_REQUEST,
+                webRequest.getDescription(true),
+                HttpStatus.BAD_REQUEST.name(),
+                HttpStatus.BAD_REQUEST.value(),
                 exception.getMessage(),
                 LocalDateTime.now()
         );

@@ -9,4 +9,7 @@ import java.util.Optional;
 public interface CustomerRepository extends BaseRepository<Customer, Long> {
 
     boolean existsByMobileNumber(String mobileNumber);
+
+    Optional<Customer> findByMobileNumber(String mobileNumber);
+
 }

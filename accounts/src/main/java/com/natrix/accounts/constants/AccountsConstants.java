@@ -10,6 +10,12 @@ public class AccountsConstants {
 
     public static final String MESSAGE_201 = "Account created successfully";
 
+    public static final String SUCCESS = "SUCCESS";
+
+    public static final String CREATED = "CREATED";
+
+    public static final String ERROR = "ERROR";
+
     public static final String STATUS_200 = "200";
 
     public static final String MESSAGE_200 = "Request processed successfully";

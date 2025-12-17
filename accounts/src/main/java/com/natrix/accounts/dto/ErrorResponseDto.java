@@ -2,7 +2,6 @@ package com.natrix.accounts.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import org.springframework.http.HttpStatus;
 
 import java.time.LocalDateTime;
 
@@ -14,22 +13,24 @@ import java.time.LocalDateTime;
 //)
 public class ErrorResponseDto {
 
-//    @Schema(
+    //    @Schema(
 //            description = "API path invoked by client"
 //    )
-    private  String apiPath;
+    private String apiPath;
 
-//    @Schema(
+    private String title;
+
+    //    @Schema(
 //            description = "Error code representing the error happened"
 //    )
-    private HttpStatus errorCode;
+    private Integer errorCode;
 
-//    @Schema(
+    //    @Schema(
 //            description = "Error message representing the error happened"
 //    )
-    private  String errorMessage;
+    private String errorMessage;
 
-//    @Schema(
+    //    @Schema(
 //            description = "Time representing when the error happened"
 //    )
     private LocalDateTime errorTime;
