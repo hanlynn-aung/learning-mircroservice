@@ -1,10 +1,10 @@
-package com.natrix.accounts.controller;
+package com.natrix.loan.controller;
 
-import com.natrix.accounts.constants.AccountsConstants;
-import com.natrix.accounts.dto.CustomerDto;
-import com.natrix.accounts.dto.ErrorResponseDto;
-import com.natrix.accounts.dto.ResponseDto;
-import com.natrix.accounts.service.IAccountsService;
+import com.natrix.loan.constants.LoansConstants;
+import com.natrix.loan.dto.ErrorResponseDto;
+import com.natrix.loan.dto.LoansDto;
+import com.natrix.loan.dto.ResponseDto;
+import com.natrix.loan.service.ILoansService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -23,28 +23,26 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDateTime;
 
 @Tag(
-        name = "CRUD REST APIs for Accounts in EazyBank",
-        description = "CRUD REST APIs in EazyBank to CREATE, UPDATE, FETCH AND DELETE account details"
+        name = "CRUD REST APIs for Loans in EazyBank",
+        description = "CRUD REST APIs in EazyBank to CREATE, UPDATE, FETCH AND DELETE loan details"
 )
 @RestController
-@RequestMapping(path = "/api", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(path = "/api", produces = {MediaType.APPLICATION_JSON_VALUE})
 @AllArgsConstructor
 @Validated
-public class AccountController {
+public class LoansController {
 
-    private final IAccountsService accountsService;
+    private final ILoansService loanService;
 
     @Operation(
-            summary = "Create Account REST API",
-            description = "REST API to create new Customer &  Account inside EazyBank"
+            summary = "Create Loan REST API",
+            description = "REST API to create new loan inside EazyBank"
     )
     @ApiResponses({
             @ApiResponse(
                     responseCode = "201",
                     description = "HTTP Status CREATED",
-                    content = @Content(
-                            schema = @Schema(implementation = ResponseDto.class)
-                    )
+                    content = @Content(schema = @Schema(implementation = ResponseDto.class))
             ),
             @ApiResponse(
                     responseCode = "500",
@@ -56,21 +54,24 @@ public class AccountController {
     }
     )
     @PostMapping("/create")
-    public ResponseEntity<?> createAccount(@Valid @RequestBody CustomerDto customerDto) {
+    public ResponseEntity<?> createLoan(@RequestParam
+                                        @Pattern(
+                                                regexp = "(^$|^(09\\d{7,9}|\\+959\\d{7,9})$)",
+                                                message = "Invalid mobile number"
+                                        ) String mobileNumber) {
 
-        this.accountsService.createAccount(customerDto);
-
+        this.loanService.createLoan(mobileNumber);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(new ResponseDto(
-                        AccountsConstants.CREATED,
-                        AccountsConstants.STATUS_201,
-                        AccountsConstants.MESSAGE_201,
+                        LoansConstants.CREATED,
+                        LoansConstants.STATUS_201,
+                        LoansConstants.MESSAGE_201,
                         LocalDateTime.now()));
     }
 
     @Operation(
-            summary = "Fetch Account Details REST API",
-            description = "REST API to fetch Customer &  Account details based on a mobile number"
+            summary = "Fetch Loan Details REST API",
+            description = "REST API to fetch loan details based on a mobile number"
     )
     @ApiResponses({
             @ApiResponse(
@@ -90,21 +91,19 @@ public class AccountController {
     }
     )
     @GetMapping("/fetch")
-    public ResponseEntity<?> fetchAccountDetails(@RequestParam
-                                                 @Pattern(
-                                                         regexp = "(^$|^(09\\d{7,9}|\\+959\\d{7,9})$)",
-                                                         message = "Invalid mobile number"
-                                                 ) String mobileNumber) {
+    public ResponseEntity<LoansDto> fetchLoanDetails(@RequestParam
+                                                     @Pattern(
+                                                             regexp = "(^$|^(09\\d{7,9}|\\+959\\d{7,9})$)",
+                                                             message = "Invalid mobile number"
+                                                     ) String mobileNumber) {
 
-        CustomerDto customerDto = accountsService.fetchAccount(mobileNumber);
-
-        return ResponseEntity.status(HttpStatus.OK).body(customerDto);
+        LoansDto loansDto = this.loanService.fetchLoan(mobileNumber);
+        return ResponseEntity.status(HttpStatus.OK).body(loansDto);
     }
 
-
     @Operation(
-            summary = "Update Account Details REST API",
-            description = "REST API to update Customer &  Account details based on a account number"
+            summary = "Update Loan Details REST API",
+            description = "REST API to update loan details based on a loan number"
     )
     @ApiResponses({
             @ApiResponse(
@@ -131,48 +130,42 @@ public class AccountController {
     }
     )
     @PutMapping("/update")
-    public ResponseEntity<?> updateAccount(@Valid @RequestBody CustomerDto customerDto) {
+    public ResponseEntity<?> updateLoanDetails(@Valid @RequestBody LoansDto loansDto) {
 
-        boolean updateAccount = this.accountsService.updateAccount(customerDto);
+        boolean isUpdated = this.loanService.updateLoan(loansDto);
+        if (isUpdated) {
 
-        if (updateAccount) {
-            return ResponseEntity
-                    .status(HttpStatus.OK)
+            return ResponseEntity.status(HttpStatus.CREATED)
                     .body(new ResponseDto(
-                            AccountsConstants.SUCCESS,
-                            AccountsConstants.STATUS_200,
-                            AccountsConstants.MESSAGE_200,
+                            LoansConstants.SUCCESS,
+                            LoansConstants.STATUS_200,
+                            LoansConstants.MESSAGE_200,
                             LocalDateTime.now()));
         } else {
+
             return ResponseEntity
                     .status(HttpStatus.EXPECTATION_FAILED)
                     .body(new ErrorResponseDto(
                             "/update",
-                            AccountsConstants.ERROR,
-                            AccountsConstants.STATUS_417,
-                            AccountsConstants.MESSAGE_417_UPDATE,
+                            LoansConstants.ERROR,
+                            LoansConstants.STATUS_417,
+                            LoansConstants.MESSAGE_417_UPDATE,
                             LocalDateTime.now()));
         }
     }
 
     @Operation(
-            summary = "Delete Account & Customer Details REST API",
-            description = "REST API to delete Customer &  Account details based on a mobile number"
+            summary = "Delete Loan Details REST API",
+            description = "REST API to delete Loan details based on a mobile number"
     )
     @ApiResponses({
             @ApiResponse(
                     responseCode = "200",
-                    description = "HTTP Status OK",
-                    content = @Content(
-                            schema = @Schema(implementation = ResponseDto.class)
-                    )
+                    description = "HTTP Status OK"
             ),
             @ApiResponse(
                     responseCode = "417",
-                    description = "Expectation Failed",
-                    content = @Content(
-                            schema = @Schema(implementation = ErrorResponseDto.class)
-                    )
+                    description = "Expectation Failed"
             ),
             @ApiResponse(
                     responseCode = "500",
@@ -184,33 +177,30 @@ public class AccountController {
     }
     )
     @DeleteMapping("/delete")
-    public ResponseEntity<?> deleteAccount(@RequestParam
-                                           @Pattern(
-                                                   regexp = "(^$|^(09\\d{7,9}|\\+959\\d{7,9})$)",
-                                                   message = "Invalid mobile number"
-                                           )
-                                           String mobileNumber) {
+    public ResponseEntity<?> deleteLoanDetails(@RequestParam
+                                               @Pattern(
+                                                       regexp = "(^$|^(09\\d{7,9}|\\+959\\d{7,9})$)",
+                                                       message = "Invalid mobile number"
+                                               ) String mobileNumber) {
 
-        boolean isDeleted = this.accountsService.deleteAccount(mobileNumber);
-
+        boolean isDeleted = this.loanService.deleteLoan(mobileNumber);
         if (isDeleted) {
             return ResponseEntity
                     .status(HttpStatus.OK)
                     .body(new ResponseDto(
-                            AccountsConstants.SUCCESS,
-                            AccountsConstants.STATUS_200,
-                            AccountsConstants.MESSAGE_200,
+                            LoansConstants.SUCCESS,
+                            LoansConstants.STATUS_200,
+                            LoansConstants.MESSAGE_200,
                             LocalDateTime.now()));
         } else {
             return ResponseEntity
                     .status(HttpStatus.EXPECTATION_FAILED)
                     .body(new ErrorResponseDto(
                             "/delete",
-                            AccountsConstants.ERROR,
-                            AccountsConstants.STATUS_417,
-                            AccountsConstants.MESSAGE_417_DELETE,
-                            LocalDateTime.now()
-                    ));
+                            LoansConstants.ERROR,
+                            LoansConstants.STATUS_417,
+                            LoansConstants.MESSAGE_417_DELETE,
+                            LocalDateTime.now()));
         }
     }
 

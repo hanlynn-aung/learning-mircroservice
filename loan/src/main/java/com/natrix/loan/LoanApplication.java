@@ -1,4 +1,4 @@
-package com.natrix.accounts;
+package com.natrix.loan;
 
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.info.Contact;
@@ -7,15 +7,15 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
-/*@ComponentScans({ @ComponentScan("com.natrix.accounts.controller") })
-@EnableJpaRepositories("com.natrix.accounts.repository")
-@EntityScan("com.natrix.accounts.entity")*/
 @SpringBootApplication
 @EnableJpaAuditing(auditorAwareRef = "auditAwareImpl")
+/*@ComponentScans({ @ComponentScan("com.natrix.loan.controller") })
+@EnableJpaRepositories("com.natrix.loan.repository")
+@EntityScan("com.natrix.loan.entity")*/
 @OpenAPIDefinition(
         info = @Info(
-                title = "Accounts microservice REST API Documentation",
-                description = "EazyBank Accounts microservice REST API Documentation",
+                title = "Loan microservice REST API Documentation",
+                description = "EazyBank Loan microservice REST API Documentation",
                 version = "v1",
                 contact = @Contact(
                         name = "Natrix",
@@ -32,10 +32,11 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 //                url = "https://hanlynnaung-portfolio-ky6ft6bnj-han-lynn-aung.vercel.app/" //dummy
         )
 )
-public class AccountsApplication {
+public class LoanApplication {
 
-	static void main(String[] args) {
-		SpringApplication.run(AccountsApplication.class, args);
-	}
+    public static void main(String[] args) {
+
+        SpringApplication.run(LoanApplication.class, args);
+    }
 
 }
