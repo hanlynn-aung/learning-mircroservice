@@ -14,8 +14,8 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 @EntityScan("com.natrix.loan.entity")*/
 @OpenAPIDefinition(
         info = @Info(
-                title = "Loan microservice REST API Documentation",
-                description = "EazyBank Loan microservice REST API Documentation",
+                title = "Loans microservice REST API Documentation",
+                description = "EazyBank Loans microservice REST API Documentation",
                 version = "v1",
                 contact = @Contact(
                         name = "Natrix",
@@ -28,7 +28,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 //                )
 //        ),
 //        externalDocs = @ExternalDocumentation(
-//                description = "EazyBank Accounts microservice REST API Documentation",
+//                description = "EazyBank Loans microservice REST API Documentation",
 //                url = "https://hanlynnaung-portfolio-ky6ft6bnj-han-lynn-aung.vercel.app/" //dummy
         )
 )

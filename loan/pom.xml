@@ -11,6 +11,7 @@
     <groupId>com.natrix</groupId>
     <artifactId>loan</artifactId>
     <version>0.0.1-SNAPSHOT</version>
+    <packaging>jar</packaging>
     <name>loan</name>
     <description>Microservice Project for loan</description>
     <url/>
@@ -112,6 +113,9 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
+                    <image>
+                       <name>hanlynnaung7/${project.artifactId}:v1</name> <!-- buildpack approach-->
+                    </image>
                     <excludes>
                         <exclude>
                             <groupId>org.projectlombok</groupId>

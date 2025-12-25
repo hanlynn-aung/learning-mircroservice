@@ -13,7 +13,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Pattern;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -22,195 +22,147 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 
-/**
- * @author Eazy Bytes
- */
-
 @Tag(
-        name = "CRUD REST APIs for Cards in EazyBank",
-        description = "CRUD REST APIs in EazyBank to CREATE, UPDATE, FETCH AND DELETE card details"
+        name = "Cards Management APIs",
+        description = "REST APIs for CREATE, UPDATE, FETCH and DELETE Card details"
 )
 @RestController
-@RequestMapping(path = "/api", produces = {MediaType.APPLICATION_JSON_VALUE})
-@AllArgsConstructor
+@RequestMapping(value = "/api/cards", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequiredArgsConstructor
 @Validated
 public class CardsController {
 
     private final ICardsService cardService;
 
-    @Operation(
-            summary = "Create Card REST API",
-            description = "REST API to create new Card inside EazyBank"
-    )
+    private static final String MOBILE_REGEX =
+            "(^$|^(09\\d{7,9}|\\+959\\d{7,9})$)";
+
+    /* ===================== CREATE ===================== */
+
+    @Operation(summary = "Create Card", description = "Create a new card using mobile number")
     @ApiResponses({
-            @ApiResponse(
-                    responseCode = "201",
-                    description = "HTTP Status CREATED",
-                    content = @Content(schema = @Schema(implementation = ResponseDto.class))
-            ),
-            @ApiResponse(
-                    responseCode = "500",
-                    description = "HTTP Status Internal Server Error",
-                    content = @Content(
-                            schema = @Schema(implementation = ErrorResponseDto.class)
-                    )
-            )
-    }
-    )
+            @ApiResponse(responseCode = "201", description = "Card created successfully",
+                    content = @Content(schema = @Schema(implementation = ResponseDto.class))),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error",
+                    content = @Content(schema = @Schema(implementation = ErrorResponseDto.class)))
+    })
     @PostMapping("/create")
-    public ResponseEntity<?> createCard(@Valid @RequestParam
-                                        @Pattern(
-                                                regexp = "(^$|^(09\\d{7,9}|\\+959\\d{7,9})$)",
-                                                message = "Invalid mobile number"
-                                        )
-                                        String mobileNumber) {
+    public ResponseEntity<ResponseDto> createCard(@RequestParam
+                                                  @Pattern(regexp = MOBILE_REGEX, message = "Invalid mobile number")
+                                                  String mobileNumber) {
 
-        this.cardService.createCard(mobileNumber);
+        cardService.createCard(mobileNumber);
 
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(new ResponseDto(
-                        CardsConstants.CREATED,
-                        CardsConstants.STATUS_201,
-                        CardsConstants.MESSAGE_201,
-                        LocalDateTime.now()));
+        return buildSuccessResponse(
+                CardsConstants.CREATED,
+                CardsConstants.STATUS_201,
+                CardsConstants.MESSAGE_201,
+                HttpStatus.CREATED
+        );
     }
 
-    @Operation(
-            summary = "Fetch Card Details REST API",
-            description = "REST API to fetch card details based on a mobile number"
-    )
+    /* ===================== FETCH ===================== */
+
+    @Operation(summary = "Fetch Card Details", description = "Fetch card details by mobile number")
     @ApiResponses({
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "HTTP Status OK",
-                    content = @Content(schema = @Schema(implementation = ResponseDto.class))
-            ),
-            @ApiResponse(
-                    responseCode = "500",
-                    description = "HTTP Status Internal Server Error",
-                    content = @Content(
-                            schema = @Schema(implementation = ErrorResponseDto.class)
-                    )
-            )
+            @ApiResponse(responseCode = "200", description = "Card details fetched successfully"),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error",
+                    content = @Content(schema = @Schema(implementation = ErrorResponseDto.class)))
     })
     @GetMapping("/fetch")
-    public ResponseEntity<?> fetchCardDetails(@RequestParam
-                                              @Pattern(
-                                                      regexp = "(^$|^(09\\d{7,9}|\\+959\\d{7,9})$)",
-                                                      message = "Invalid mobile number"
-                                              )
-                                              String mobileNumber) {
+    public ResponseEntity<CardsDto> fetchCardDetails(@RequestParam
+                                                     @Pattern(regexp = MOBILE_REGEX, message = "Invalid mobile number")
+                                                     String mobileNumber) {
 
-        CardsDto cardsDto = this.cardService.fetchCard(mobileNumber);
-
-        return ResponseEntity.status(HttpStatus.OK).body(cardsDto);
+        CardsDto cardsDto = cardService.fetchCard(mobileNumber);
+        return ResponseEntity.ok(cardsDto);
     }
 
-    @Operation(
-            summary = "Update Card Details REST API",
-            description = "REST API to update card details based on a card number"
-    )
+    /* ===================== UPDATE ===================== */
+
+    @Operation(summary = "Update Card Details", description = "Update card details by card number")
     @ApiResponses({
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "HTTP Status OK",
-                    content = @Content(schema = @Schema(implementation = ResponseDto.class))
-            ),
-            @ApiResponse(
-                    responseCode = "417",
-                    description = "Expectation Failed",
-                    content = @Content(
-                            schema = @Schema(implementation = ErrorResponseDto.class)
-                    )
-            ),
-            @ApiResponse(
-                    responseCode = "500",
-                    description = "HTTP Status Internal Server Error",
-                    content = @Content(
-                            schema = @Schema(implementation = ErrorResponseDto.class)
-                    )
-            )
+            @ApiResponse(responseCode = "200", description = "Card updated successfully"),
+            @ApiResponse(responseCode = "417", description = "Update failed"),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error",
+                    content = @Content(schema = @Schema(implementation = ErrorResponseDto.class)))
     })
     @PutMapping("/update")
-    public ResponseEntity<?> updateCardDetails(@Valid @RequestBody CardsDto cardsDto) {
+    public ResponseEntity<?> updateCard(@Valid @RequestBody CardsDto cardsDto) {
 
-        boolean isUpdated = this.cardService.updateCard(cardsDto);
-        if (isUpdated) {
+        boolean updated = cardService.updateCard(cardsDto);
 
-            return ResponseEntity.status(HttpStatus.CREATED)
-                    .body(new ResponseDto(
-                            CardsConstants.SUCCESS,
-                            CardsConstants.STATUS_200,
-                            CardsConstants.MESSAGE_200,
-                            LocalDateTime.now()));
-        } else {
-
-            return ResponseEntity
-                    .status(HttpStatus.EXPECTATION_FAILED)
-                    .body(new ErrorResponseDto(
-                            "/update",
-                            CardsConstants.ERROR,
-                            CardsConstants.STATUS_417,
-                            CardsConstants.MESSAGE_417_UPDATE,
-                            LocalDateTime.now()));
-        }
+        return updated
+                ? buildSuccessResponse(
+                CardsConstants.SUCCESS,
+                CardsConstants.STATUS_200,
+                CardsConstants.MESSAGE_200,
+                HttpStatus.OK
+        )
+                : buildErrorResponse(
+                "/update",
+                CardsConstants.MESSAGE_417_UPDATE
+        );
     }
 
-    @Operation(
-            summary = "Delete Card Details REST API",
-            description = "REST API to delete Card details based on a mobile number"
-    )
+    /* ===================== DELETE ===================== */
+
+    @Operation(summary = "Delete Card", description = "Delete card by mobile number")
     @ApiResponses({
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "HTTP Status OK",
-                    content = @Content(
-                            schema = @Schema(implementation = ResponseDto.class)
-                    )
-            ),
-            @ApiResponse(
-                    responseCode = "417",
-                    description = "Expectation Failed",
-                    content = @Content(
-                            schema = @Schema(implementation = ErrorResponseDto.class)
-                    )
-            ),
-            @ApiResponse(
-                    responseCode = "500",
-                    description = "HTTP Status Internal Server Error",
-                    content = @Content(
-                            schema = @Schema(implementation = ErrorResponseDto.class)
-                    )
-            )
+            @ApiResponse(responseCode = "200", description = "Card deleted successfully"),
+            @ApiResponse(responseCode = "417", description = "Delete failed"),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error",
+                    content = @Content(schema = @Schema(implementation = ErrorResponseDto.class)))
     })
     @DeleteMapping("/delete")
-    public ResponseEntity<?> deleteCardDetails(@RequestParam
-                                               @Pattern(
-                                                       regexp = "(^$|^(09\\d{7,9}|\\+959\\d{7,9})$)",
-                                                       message = "Invalid mobile number"
-                                               )
-                                               String mobileNumber) {
+    public ResponseEntity<?> deleteCard(@RequestParam
+                                        @Pattern(regexp = MOBILE_REGEX, message = "Invalid mobile number")
+                                        String mobileNumber) {
 
-        boolean isDeleted = this.cardService.deleteCard(mobileNumber);
+        boolean deleted = cardService.deleteCard(mobileNumber);
 
-        if (isDeleted) {
-            return ResponseEntity
-                    .status(HttpStatus.OK)
-                    .body(new ResponseDto(
-                            CardsConstants.SUCCESS,
-                            CardsConstants.STATUS_200,
-                            CardsConstants.MESSAGE_200,
-                            LocalDateTime.now()));
-        } else {
-            return ResponseEntity
-                    .status(HttpStatus.EXPECTATION_FAILED)
-                    .body(new ErrorResponseDto(
-                            "/delete",
-                            CardsConstants.ERROR,
-                            CardsConstants.STATUS_417,
-                            CardsConstants.MESSAGE_417_DELETE,
-                            LocalDateTime.now()));
-        }
+        return deleted
+                ? buildSuccessResponse(
+                CardsConstants.SUCCESS,
+                CardsConstants.STATUS_200,
+                CardsConstants.MESSAGE_200,
+                HttpStatus.OK
+        )
+                : buildErrorResponse(
+                "/delete",
+                CardsConstants.MESSAGE_417_DELETE
+        );
+    }
+
+    /* ===================== COMMON RESPONSE BUILDERS ===================== */
+
+    private ResponseEntity<ResponseDto> buildSuccessResponse(
+            String status,
+            Integer statusCode,
+            String message,
+            HttpStatus httpStatus) {
+
+        return ResponseEntity.status(httpStatus)
+                .body(new ResponseDto(
+                        status,
+                        statusCode,
+                        message,
+                        LocalDateTime.now()
+                ));
+    }
+
+    private ResponseEntity<ErrorResponseDto> buildErrorResponse(
+            String path,
+            String message) {
+
+        return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED)
+                .body(new ErrorResponseDto(
+                        path,
+                        CardsConstants.ERROR,
+                        HttpStatus.EXPECTATION_FAILED.value(),
+                        message,
+                        LocalDateTime.now()
+                ));
     }
 
 }

@@ -28,7 +28,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 //                )
 //        ),
 //        externalDocs = @ExternalDocumentation(
-//                description = "EazyBank Accounts microservice REST API Documentation",
+//                description = "EazyBank Cards microservice REST API Documentation",
 //                url = "https://hanlynnaung-portfolio-ky6ft6bnj-han-lynn-aung.vercel.app/" //dummy
         )
 )

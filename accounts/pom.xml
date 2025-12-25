@@ -5,13 +5,14 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>4.0.0</version>
+		<version>4.0.1</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.natrix</groupId>
-	<artifactId>accounts</artifactId>
+	<artifactId>account</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>accounts</name>
+    <packaging>jar</packaging>
+	<name>account</name>
 	<description>Microservice project for Accounts</description>
 	<url/>
 	<licenses>
