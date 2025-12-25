@@ -126,6 +126,3 @@ microservice-accounts-project/
 - Each service is independently deployable
 - Services use in-memory H2 database by default
 - API versioning follows RESTful best practices
-
-## 📄 License
-This project is licensed under the MIT License.
