@@ -1,0 +1,10 @@
+services:
+  accounts:
+    image: hanlynnaung7/account:v1
+    container_name: accounts-ms
+    ports:
+      - "8080:8080"
+    deploy:
+      resources:
+        limits:
+          memory: 700m
