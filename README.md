@@ -99,6 +99,33 @@ mvn compile jib:dockerBuild -Dimage=hanlynnaung7/card:v1
 docker run -p 9000:9000 hanlynnaung7/card:v1
 ```
 
+### Docker Compose (Recommended for Local Development)
+
+To run all services with a single command using Docker Compose:
+
+```bash
+# Navigate to the accounts directory containing docker-compose.yaml
+cd accounts
+
+# Start all services in detached mode
+docker-compose up -d
+
+# View running containers
+docker-compose ps
+
+# View logs for all services
+docker-compose logs -f
+
+# Stop all services
+docker-compose down
+```
+
+**Features:**
+- All services (Accounts, Card, Loan) run in isolated containers
+- Dedicated bridge network `eazybank` for inter-service communication
+- Memory limits set to 700MB per service
+- Ports exposed: 8080 (Accounts), 8090 (Loan), 9000 (Card)
+
 ## 🧪 Testing
 
 Run tests for all services:

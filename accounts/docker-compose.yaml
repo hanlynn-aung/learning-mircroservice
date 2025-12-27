@@ -8,3 +8,33 @@ services:
       resources:
         limits:
           memory: 700m
+    networks:
+      - eazybank
+
+  card:
+    image: hanlynnaung7/card:v1
+    container_name: cards-ms
+    ports:
+      - "9000:9000"
+    deploy:
+      resources:
+        limits:
+          memory: 700m
+    networks:
+      - eazybank
+
+  loan:
+    image: hanlynnaung7/loan:v1
+    container_name: loans-ms
+    ports:
+      - "8090:8090"
+    deploy:
+      resources:
+        limits:
+          memory: 700m
+    networks:
+      - eazybank
+
+networks:
+  eazybank:
+    driver: bridge
