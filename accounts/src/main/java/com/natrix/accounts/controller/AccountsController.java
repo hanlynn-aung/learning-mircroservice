@@ -1,6 +1,7 @@
 package com.natrix.accounts.controller;
 
 import com.natrix.accounts.constants.AccountsConstants;
+import com.natrix.accounts.dto.AccountsContactInfoDto;
 import com.natrix.accounts.dto.CustomerDto;
 import com.natrix.accounts.dto.ErrorResponseDto;
 import com.natrix.accounts.dto.ResponseDto;
@@ -13,7 +14,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Pattern;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -28,6 +31,7 @@ import java.time.LocalDateTime;
 )
 @RestController
 @RequestMapping(value = "/api/accounts", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequiredArgsConstructor
 @Validated
 public class AccountsController {
 
@@ -36,14 +40,12 @@ public class AccountsController {
     @Value("${build.version}")
     private String buildVersion;
 
+    private final Environment environment;
+
+    private final AccountsContactInfoDto accountsContactInfoDto;
+
     private static final String MOBILE_REGEX =
             "(^$|^(09\\d{7,9}|\\+959\\d{7,9})$)";
-
-    public AccountsController(IAccountsService accountsService) {
-
-        this.accountsService = accountsService;
-    }
-
 
     /* ===================== CREATE ===================== */
 
@@ -139,6 +141,8 @@ public class AccountsController {
                 AccountsConstants.MESSAGE_417_DELETE
         );
     }
+
+    @Deprecated
     @Operation(summary = "Get Build Information", description = "Get Build Information that is deployed into account microservice")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "HTTP Status 200 OK"),
@@ -149,6 +153,32 @@ public class AccountsController {
     public ResponseEntity<String> getBuildVersion() {
 
         return ResponseEntity.ok(buildVersion);
+    }
+
+    @Deprecated
+    @Operation(summary = "Get Java Version Information", description = "Get Java Version Information that is deployed into account microservice")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "HTTP Status 200 OK"),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error",
+                    content = @Content(schema = @Schema(implementation = ErrorResponseDto.class)))
+    })
+    @GetMapping("/java-info")
+    public ResponseEntity<String> getJavaVersion() {
+
+        return ResponseEntity.ok(environment.getProperty("JAVA_HOME"));
+    }
+
+    @Deprecated
+    @Operation(summary = "Get Contact Information", description = "Get Contact Information that can be reached out in case of any issues")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "HTTP Status 200 OK"),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error",
+                    content = @Content(schema = @Schema(implementation = ErrorResponseDto.class)))
+    })
+    @GetMapping("/contact-info")
+    public ResponseEntity<AccountsContactInfoDto> getContactInfo() {
+
+        return ResponseEntity.ok(accountsContactInfoDto);
     }
 
     /* ===================== COMMON RESPONSE BUILDERS ===================== */
