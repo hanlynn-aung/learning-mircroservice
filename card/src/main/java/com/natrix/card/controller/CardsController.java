@@ -1,6 +1,7 @@
 package com.natrix.card.controller;
 
 import com.natrix.card.constants.CardsConstants;
+import com.natrix.card.dto.CardsContactInfoDto;
 import com.natrix.card.dto.CardsDto;
 import com.natrix.card.dto.ErrorResponseDto;
 import com.natrix.card.dto.ResponseDto;
@@ -13,7 +14,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Pattern;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -29,6 +32,7 @@ import java.time.LocalDateTime;
 @RestController
 @RequestMapping(value = "/api/cards", produces = MediaType.APPLICATION_JSON_VALUE)
 @Validated
+@RequiredArgsConstructor
 public class CardsController {
 
     private final ICardsService cardService;
@@ -36,14 +40,12 @@ public class CardsController {
     @Value("${build.version}")
     private String buildVersion;
 
+    private final Environment environment;
+
+    private final CardsContactInfoDto cardsContactInfoDto;
+
     private static final String MOBILE_REGEX =
             "(^$|^(09\\d{7,9}|\\+959\\d{7,9})$)";
-
-    public CardsController(ICardsService cardService) {
-
-        this.cardService = cardService;
-    }
-
 
     /* ===================== CREATE ===================== */
 
@@ -142,6 +144,7 @@ public class CardsController {
         );
     }
 
+    @Deprecated
     @Operation(summary = "Get Build Information", description = "Get Build Information that is deployed into card microservice")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "HTTP Status 200 OK"),
@@ -152,6 +155,32 @@ public class CardsController {
     public ResponseEntity<String> getBuildVersion() {
 
         return ResponseEntity.ok(buildVersion);
+    }
+
+    @Deprecated
+    @Operation(summary = "Get Java Version Information", description = "Get Java Version Information that is deployed into card microservice")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "HTTP Status 200 OK"),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error",
+                    content = @Content(schema = @Schema(implementation = ErrorResponseDto.class)))
+    })
+    @GetMapping("/java-info")
+    public ResponseEntity<String> getJavaVersion() {
+
+        return ResponseEntity.ok(environment.getProperty("JAVA_HOME"));
+    }
+
+    @Deprecated
+    @Operation(summary = "Get Contact Information", description = "Get Contact Information that can be reached out in case of any issues")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "HTTP Status 200 OK"),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error",
+                    content = @Content(schema = @Schema(implementation = ErrorResponseDto.class)))
+    })
+    @GetMapping("/contact-info")
+    public ResponseEntity<CardsContactInfoDto> getContactInfo() {
+
+        return ResponseEntity.ok(cardsContactInfoDto);
     }
 
     /* ===================== COMMON RESPONSE BUILDERS ===================== */

@@ -14,6 +14,22 @@ spring:
     hibernate:
       ddl-auto: update
     show-sql: true
+  config:
+    import:
+      - application.dev.yaml
+      - application.prod.yaml
+  profiles:
+    active:
+      - dev
 
 build:
-  version: "1.0"
+  version: "3.0"
+
+cards:
+  message: "Welcome to EazyBank card related Local APIs "
+  contactDetails:
+    name: "Natrix - Developer"
+    email: "natrix@eazybank.com"
+  onCallSupport:
+    - (959) 427778544
+    - (959) 427778555

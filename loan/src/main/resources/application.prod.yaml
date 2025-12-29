@@ -1,0 +1,16 @@
+spring:
+  config:
+    activate:
+      on-profile: prod
+
+build:
+  version: "1.0"
+
+loans:
+  message: "Welcome to EazyBank loans related Prod APIs "
+  contactDetails:
+    name: "Natrix - Developer"
+    email: "natrix@eazybank.com"
+  onCallSupport:
+    - (959) 427778544
+    - (959) 427778555

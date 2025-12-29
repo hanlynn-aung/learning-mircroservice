@@ -2,6 +2,7 @@ package com.natrix.loan.controller;
 
 import com.natrix.loan.constants.LoansConstants;
 import com.natrix.loan.dto.ErrorResponseDto;
+import com.natrix.loan.dto.LoansContactInfoDto;
 import com.natrix.loan.dto.LoansDto;
 import com.natrix.loan.dto.ResponseDto;
 import com.natrix.loan.service.ILoansService;
@@ -13,7 +14,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Pattern;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -29,6 +32,7 @@ import java.time.LocalDateTime;
 @RestController
 @RequestMapping(value = "/api/loans", produces = MediaType.APPLICATION_JSON_VALUE)
 @Validated
+@RequiredArgsConstructor
 public class LoansController {
 
     private final ILoansService loanService;
@@ -36,15 +40,14 @@ public class LoansController {
     @Value("${build.version}")
     private String buildVersion;
 
+    private final Environment environment;
+
+    private final LoansContactInfoDto loansContactInfoDto;
+
     private static final String MOBILE_REGEX =
             "(^$|^(09\\d{7,9}|\\+959\\d{7,9})$)";
 
-    public LoansController(ILoansService loanService) {
-
-        this.loanService = loanService;
-    }
-
-    /* ===================== CREATE ===================== */
+        /* ===================== CREATE ===================== */
 
     @Operation(summary = "Create Loan", description = "Create a new loan using mobile number")
     @ApiResponses({
@@ -141,6 +144,7 @@ public class LoansController {
         );
     }
 
+    @Deprecated
     @Operation(summary = "Get Build Information", description = "Get Build Information that is deployed into loan microservice")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "HTTP Status 200 OK"),
@@ -151,6 +155,32 @@ public class LoansController {
     public ResponseEntity<String> getBuildVersion() {
 
         return ResponseEntity.ok(buildVersion);
+    }
+
+    @Deprecated
+    @Operation(summary = "Get Java Version Information", description = "Get Java Version Information that is deployed into loan microservice")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "HTTP Status 200 OK"),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error",
+                    content = @Content(schema = @Schema(implementation = ErrorResponseDto.class)))
+    })
+    @GetMapping("/java-info")
+    public ResponseEntity<String> getJavaVersion() {
+
+        return ResponseEntity.ok(environment.getProperty("JAVA_HOME"));
+    }
+
+    @Deprecated
+    @Operation(summary = "Get Contact Information", description = "Get Contact Information that can be reached out in case of any issues")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "HTTP Status 200 OK"),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error",
+                    content = @Content(schema = @Schema(implementation = ErrorResponseDto.class)))
+    })
+    @GetMapping("/contact-info")
+    public ResponseEntity<LoansContactInfoDto> getContactInfo() {
+
+        return ResponseEntity.ok(loansContactInfoDto);
     }
 
     /* ===================== COMMON RESPONSE BUILDERS ===================== */
