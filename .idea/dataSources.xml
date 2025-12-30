@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
+    <data-source source="LOCAL" name="jdbc:h2:mem:testdb [DEBUG]" group="​CardApplication" uuid="a0398ad1-6fed-44de-84a7-64b24d7e60ad">
+      <driver-ref>h2.unified</driver-ref>
+      <synchronize>true</synchronize>
+      <imported>true</imported>
+      <jdbc-driver>org.h2.Driver</jdbc-driver>
+      <jdbc-url>jdbc:h2:mem:testdb</jdbc-url>
+      <working-dir>$ProjectFileDir$</working-dir>
+    </data-source>
+    <data-source source="LOCAL" name="jdbc:h2:mem:testdb [DEBUG]" group="​AccountsApplication" uuid="b3eb1b82-f9fe-4993-b07f-da0a31cd6107">
+      <driver-ref>h2.unified</driver-ref>
+      <synchronize>true</synchronize>
+      <imported>true</imported>
+      <jdbc-driver>org.h2.Driver</jdbc-driver>
+      <jdbc-url>jdbc:h2:mem:testdb</jdbc-url>
+      <working-dir>$ProjectFileDir$</working-dir>
+    </data-source>
+    <data-source source="LOCAL" name="jdbc:h2:mem:testdb [DEBUG]" group="​LoanApplication" uuid="68d25d60-b8ec-4eca-a1f8-58caafc9be2e">
+      <driver-ref>h2.unified</driver-ref>
+      <synchronize>true</synchronize>
+      <imported>true</imported>
+      <jdbc-driver>org.h2.Driver</jdbc-driver>
+      <jdbc-url>jdbc:h2:mem:testdb</jdbc-url>
+      <working-dir>$ProjectFileDir$</working-dir>
+    </data-source>
+  </component>
+</project>
