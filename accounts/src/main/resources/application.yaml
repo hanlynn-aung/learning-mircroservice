@@ -3,7 +3,9 @@ server:
 
 spring:
   application:
-    name: accounts
+    name: account
+  profiles:
+    active: prod
   datasource:
     url: jdbc:h2:mem:testdb
     driver-class-name: org.h2.Driver
@@ -18,23 +20,8 @@ spring:
       ddl-auto: update
     show-sql: true
   config:
-    import:
-      - application.dev.yaml
-      - application.prod.yaml
-  profiles:
-    active:
-      - dev
+    import: optional:configserver:http://localhost:8071/
 
 build:
-  version: "3.0"
-
-accounts:
-  message: "Welcome to EazyBank accounts related Local APIs "
-  contactDetails:
-    name: "Natrix - Developer"
-    email: "natrix@eazybank.com"
-  onCallSupport:
-    - (959) 427778544
-    - (959) 427778555
-
+  version: "1.0"
 

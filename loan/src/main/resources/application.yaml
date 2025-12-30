@@ -1,6 +1,10 @@
 server:
   port: 8090
 spring:
+  application:
+    name: loan
+  profiles:
+    active: prod
   datasource:
     url: jdbc:h2:mem:testdb
     driverClassName: org.h2.Driver
@@ -15,21 +19,7 @@ spring:
       ddl-auto: update
     show-sql: true
   config:
-    import:
-      - application.dev.yaml
-      - application.prod.yaml
-  profiles:
-    active:
-      - dev
+    import: optional:configserver:http://localhost:8071/
 
 build:
-  version: "3.0"
-
-loans:
-  message: "Welcome to EazyBank card related Local APIs "
-  contactDetails:
-    name: "Natrix - Developer"
-    email: "natrix@eazybank.com"
-  onCallSupport:
-    - (959) 427778544
-    - (959) 427778555
+  version: "1.0"

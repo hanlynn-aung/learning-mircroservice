@@ -14,7 +14,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Pattern;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
@@ -31,18 +31,25 @@ import java.time.LocalDateTime;
 )
 @RestController
 @RequestMapping(value = "/api/accounts", produces = MediaType.APPLICATION_JSON_VALUE)
-@RequiredArgsConstructor
 @Validated
 public class AccountsController {
 
     private final IAccountsService accountsService;
 
+    private final Environment environment;
+
+    @Autowired
+    private AccountsContactInfoDto accountsContactInfoDto;
+
     @Value("${build.version}")
     private String buildVersion;
 
-    private final Environment environment;
+    public AccountsController(IAccountsService accountsService,
+                              Environment environment) {
 
-    private final AccountsContactInfoDto accountsContactInfoDto;
+        this.accountsService = accountsService;
+        this.environment = environment;
+    }
 
     private static final String MOBILE_REGEX =
             "(^$|^(09\\d{7,9}|\\+959\\d{7,9})$)";
