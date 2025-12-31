@@ -2,13 +2,23 @@ spring:
   application:
     name: "configserver"
   profiles:
-    active: native
+    active: git
+  # active: native
   cloud:
     config:
       server:
-        native:
-          search-locations: "file:///C://Users//hanlynn.aung//config" #fetch from local file system
+        #native:
+        #search-locations: "file:///C://Users//hanlynn.aung//config" #fetch from local file system
         #search-locations: classpath:/config
+        git:
+          uri: https://github.com/hanlynn-aung/learning-mircroservice-config.git
+          default-label: master
+          timeout: 5
+          clone-on-start: true
+          force-pull: true
+
+encrypt:
+  key: U2FsdGVkX18vxSqth9SZR7WujVAHtCApRrJCDklZ5ak=
 
 server:
     port: 8071

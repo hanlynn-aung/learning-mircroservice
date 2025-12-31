@@ -12,10 +12,10 @@ import java.util.Map;
 @ConfigurationProperties(prefix = "accounts")
 public class AccountsContactInfoDto {
 
-    String message;
+    private String message;
 
-    Map<String, String> contactDetails;
+    private Map<String, String> contactDetails;
 
-    List<String> onCallSupport;
+    private List<String> onCallSupport;
 
 }
