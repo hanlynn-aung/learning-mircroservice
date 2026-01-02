@@ -2,7 +2,7 @@ build:
   version: "2.0"
 
 accounts:
-  message: "Welcome to EazyBank accounts related Dev APIs "
+  message: "Welcome to EazyBank account related Dev APIs "
   contactDetails:
     name: "Natrix - Developer"
     email: "natrix@eazybank.com"

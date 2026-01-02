@@ -40,13 +40,13 @@ A modern banking platform built with Spring Boot 4.0.1 and Java 21, following mi
 1. **Clone the repository**
    ```bash
    git clone <repository-url>
-   cd microservice-accounts-project
+   cd microservice-account-project
    ```
 
 2. **Run a service**
    ```bash
    # Run Accounts Service
-   cd accounts
+   cd account
    mvn spring-boot:run
    ```
 
@@ -66,7 +66,7 @@ Each service includes interactive API documentation:
 ### Accounts Service (Dockerfile)
 ```bash
 # Build the JAR
-cd accounts
+cd account
 mvn clean package
 
 # Build Docker image
@@ -104,8 +104,8 @@ docker run -p 9000:9000 hanlynnaung7/card:v1
 To run all services with a single command using Docker Compose:
 
 ```bash
-# Navigate to the accounts directory containing docker-compose.yaml
-cd accounts
+# Navigate to the account directory containing docker-compose.yaml
+cd account
 
 # Start all services in detached mode
 docker-compose up -d

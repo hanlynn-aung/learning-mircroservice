@@ -1,7 +1,7 @@
 services:
   accounts:
     image: hanlynnaung7/account:v1
-    container_name: accounts-ms
+    container_name: account-ms
     ports:
       - "8080:8080"
     deploy:

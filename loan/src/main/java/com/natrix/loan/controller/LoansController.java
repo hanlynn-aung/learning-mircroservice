@@ -208,7 +208,7 @@ public class LoansController {
                 .body(new ErrorResponseDto(
                         path,
                         LoansConstants.ERROR,
-                        HttpStatus.EXPECTATION_FAILED.value(),
+                        LoansConstants.STATUS_417,
                         message,
                         LocalDateTime.now()
                 ));
