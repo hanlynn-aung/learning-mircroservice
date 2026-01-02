@@ -1,7 +1,7 @@
 # Banking Microservices Platform
 
 ## 🏦 Overview
-A modern banking platform built with Spring Boot 4.0.1 and Java 25, following microservices architecture. This project consists of three core services: Accounts, Loan, and Card management.
+A modern banking platform built with Spring Boot 4.0.1 and Java 21, following microservices architecture. This project consists of three core services: Accounts, Loan, and Card management.
 
 ## 🚀 Services
 
@@ -21,7 +21,7 @@ A modern banking platform built with Spring Boot 4.0.1 and Java 25, following mi
 
 ### Core Technologies
 
-- **Java 25**
+- **Java 21**
 - **Spring Boot 4.0.1**
 - **Spring Data JPA**
 - **H2 Database** (in-memory)
@@ -31,7 +31,7 @@ A modern banking platform built with Spring Boot 4.0.1 and Java 25, following mi
 
 ## 🚦 Prerequisites
 
-- JDK 25
+- JDK 21
 - Maven 3.9+
 - Git
 
