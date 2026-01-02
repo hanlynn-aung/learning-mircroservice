@@ -1,15 +1,17 @@
 # Banking Microservices Platform
 
 ## 🏦 Overview
-A modern banking platform built with Spring Boot 4.0.1 and Java 21, following microservices architecture. This project consists of three core services: Accounts, Loan, and Card management.
+A modern banking platform built with Spring Boot 4.0.1 and Java 21, following microservices architecture. This project consists of three core services: Accounts, Loan, and Card management, along with centralized configuration using Spring Cloud Config Server and asynchronous messaging via RabbitMQ.
 
 ## 🚀 Services
 
 | Service                | Port | Description |
 |------------------------|------|-------------|
-| Accounts               | 8080 | Customer account management |
-| Loan | 8090 | Loan processing system |
-| Card | 9000 | Card management system |
+| Accounts              | 8080 | Customer account management |
+| Loan                  | 8090 | Loan processing system |
+| Card                  | 9000 | Card management system |
+| Config Server         | 8888 | Centralized configuration |
+| RabbitMQ Management   | 15672 | Message broker dashboard |
 
 ## 🛠 Tech Stack
 
@@ -18,22 +20,36 @@ A modern banking platform built with Spring Boot 4.0.1 and Java 21, following mi
 - **Jib** (for Card service)
 - **Buildpacks** (for Loan service)
 - **Dockerfile** (for Accounts service)
+- **Docker Compose** (for local development)
 
 ### Core Technologies
-
 - **Java 21**
 - **Spring Boot 4.0.1**
+- **Spring Cloud Config** (for centralized configuration)
+- **Spring Cloud Bus** (with RabbitMQ)
 - **Spring Data JPA**
 - **H2 Database** (in-memory)
 - **SpringDoc OpenAPI 2.8.5**
 - **Lombok**
 - **Maven**
 
+### Message Broker
+- **RabbitMQ** - For asynchronous communication between services
+  - Default port: 5672
+  - Management UI: http://localhost:15672 (guest/guest)
+
+### Configuration Management
+- **Spring Cloud Config Server**
+  - Port: 8888
+  - Git-based configuration
+  - Automatic refresh with Spring Cloud Bus
+
 ## 🚦 Prerequisites
 
 - JDK 21
 - Maven 3.9+
 - Git
+- Docker and Docker Compose
 
 ## 🏃‍♂️ Quick Start
 
@@ -43,17 +59,30 @@ A modern banking platform built with Spring Boot 4.0.1 and Java 21, following mi
    cd microservice-account-project
    ```
 
-2. **Run a service**
+2. **Start infrastructure with Docker Compose**
    ```bash
-   # Run Accounts Service
-   cd account
-   mvn spring-boot:run
+   # Start RabbitMQ and Config Server
+   docker-compose up -d
    ```
 
-3. **Access the services**
+3. **Run the services**
+   ```bash
+   # Run Config Server
+   cd configserver
+   mvn spring-boot:run
+   
+   # In separate terminals, run each service:
+   cd account && mvn spring-boot:run
+   cd loan && mvn spring-boot:run
+   cd card && mvn spring-boot:run
+   ```
+
+4. **Access the services**
    - Accounts: http://localhost:8080
    - Loan: http://localhost:8090
    - Card: http://localhost:9000
+   - Config Server: http://localhost:8888
+   - RabbitMQ Management: http://localhost:15672 (guest/guest)
 
 ## 📚 API Documentation
 
@@ -61,7 +90,52 @@ Each service includes interactive API documentation:
 - **Swagger UI**: `http://localhost:<port>/swagger-ui.html`
 - **OpenAPI JSON**: `http://localhost:<port>/v3/api-docs`
 
-## 🐳 Containerization
+## 🔄 Configuration Management
+
+### Config Server
+- Centralized configuration for all services
+- Configuration files are stored in a Git repository
+- Supports profiles (dev, prod, etc.)
+- Automatic refresh with Spring Cloud Bus
+
+### Refresh Configuration
+To refresh configuration without restarting services:
+```bash
+# Send refresh event to all services
+curl -X POST http://localhost:<port>/actuator/bus-refresh
+```
+
+## 🐇 RabbitMQ Commands
+
+### Start RabbitMQ with Docker
+```bash
+docker run -d --name rabbitmq -p 5672:5672 -p 15672:15672 rabbitmq:3-management
+```
+
+### Common RabbitMQ Commands
+```bash
+# List queues
+rabbitmqadmin list queues
+
+# Publish a message
+rabbitmqadmin publish exchange=amq.default routing_key=queue_name payload='{"key":"value"}'
+
+# Check service connections
+rabbitmqadmin list connections
+```
+
+### Monitoring
+- Access RabbitMQ Management UI at http://localhost:15672
+- Default credentials: guest/guest
+
+## 🔄 Service Communication
+
+### Asynchronous Messaging
+- Services communicate asynchronously using RabbitMQ
+- Event-driven architecture for better scalability
+- Automatic retry and dead-letter queue support for failed messages
+
+## 🐳 Containerization (Advanced)
 
 ### Accounts Service (Dockerfile)
 ```bash
