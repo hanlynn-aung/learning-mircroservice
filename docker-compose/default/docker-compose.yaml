@@ -14,6 +14,8 @@ services:
       timeout: 5s
       retries: 3
       start_period: 5s
+    networks:
+      - eazybank
 
   configserver:
     image: hanlynnaung7/configserver:v1
