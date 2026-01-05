@@ -14,7 +14,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Pattern;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
@@ -32,7 +31,6 @@ import java.time.LocalDateTime;
 @RestController
 @RequestMapping(value = "/api/cards", produces = MediaType.APPLICATION_JSON_VALUE)
 @Validated
-@RequiredArgsConstructor
 public class CardsController {
 
     private final ICardsService cardService;
@@ -43,6 +41,15 @@ public class CardsController {
     private final Environment environment;
 
     private final CardsContactInfoDto cardsContactInfoDto;
+
+    public CardsController(ICardsService cardService,
+                           Environment environment,
+                           CardsContactInfoDto cardsContactInfoDto) {
+
+        this.cardService = cardService;
+        this.environment = environment;
+        this.cardsContactInfoDto = cardsContactInfoDto;
+    }
 
     private static final String MOBILE_REGEX =
             "(^$|^(09\\d{7,9}|\\+959\\d{7,9})$)";

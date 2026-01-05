@@ -14,8 +14,9 @@ services:
       timeout: 5s
       retries: 3
       start_period: 5s
-    networks:
-      - eazybank
+    extends:
+      file: common-config.yaml
+      service: network-deploy-service
 
   configserver:
     image: hanlynnaung7/configserver:v1
@@ -31,69 +32,42 @@ services:
       timeout: 5s
       retries: 3
       start_period: 10s
-    deploy:
-      resources:
-        limits:
-          memory: 700m
-    networks:
-      - eazybank
+    extends:
+      file: common-config.yaml
+      service: microservice-base-config
 
   accounts:
     image: hanlynnaung7/account:v1
     container_name: account-ms
     ports:
       - "8080:8080"
-    depends_on:
-      configserver:
-        condition: service_healthy
-    deploy:
-      resources:
-        limits:
-          memory: 700m
-    networks:
-      - eazybank
+    extends:
+      file: common-config.yml
+      service: microservice-base-config
     environment:
       SPRING_APPLICATION_NAME: account
-      SPRING_CONFIG_IMPORT: configserver:http://configserver:8071/
-      SPRING_PROFILES_ACTIVE: default
 
   card:
     image: hanlynnaung7/card:v1
     container_name: cards-ms
     ports:
       - "9000:9000"
-    depends_on:
-      configserver:
-        condition: service_healthy
-    deploy:
-      resources:
-        limits:
-          memory: 700m
-    networks:
-      - eazybank
+    extends:
+      file: common-config.yml
+      service: microservice-base-config
     environment:
       SPRING_APPLICATION_NAME: card
-      SPRING_CONFIG_IMPORT: configserver:http://configserver:8071/
-      SPRING_PROFILES_ACTIVE: default
 
   loan:
     image: hanlynnaung7/loan:v1
     container_name: loans-ms
     ports:
       - "8090:8090"
-    depends_on:
-      configserver:
-        condition: service_healthy
-    deploy:
-      resources:
-        limits:
-          memory: 700m
-    networks:
-      - eazybank
+    extends:
+      file: common-config.yml
+      service: microservice-base-config
     environment:
       SPRING_APPLICATION_NAME: loan
-      SPRING_CONFIG_IMPORT: configserver:http://configserver:8071/
-      SPRING_PROFILES_ACTIVE: default
 
 networks:
   eazybank:
