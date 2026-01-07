@@ -4,7 +4,8 @@ services:
       - eazybank
 
   microservice-base-config:
-    extends: service:network-deploy-service
+    extends:
+    service: network-deploy-service
     deploy:
       resources:
         limits:
