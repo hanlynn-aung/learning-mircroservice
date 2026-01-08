@@ -1,0 +1,75 @@
+version: "3.9"
+
+# Reusable base configurations using anchors
+x-network-deploy-service: &network-deploy-service
+  networks:
+    - eazybank
+
+x-microservice-base-config: &microservice-base-config
+  <<: *network-deploy-service
+  mem_limit: 700m
+
+services:
+  rabbit:
+    image: rabbitmq:3.12-management-alpine
+    hostname: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      - RABBITMQ_DEFAULT_USER=guest
+      - RABBITMQ_DEFAULT_PASS=guest
+    healthcheck:
+      test: rabbitmq-diagnostics check_port_connectivity
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
+    <<: *microservice-base-config
+
+  configserver:
+    image: hanlynnaung7/configserver:v1
+    container_name: configserver-ms
+    ports:
+      - "8071:8071"
+    depends_on:
+      rabbit:
+        condition: service_healthy
+    healthcheck:
+      test: curl --fail --silent http://localhost:8071/actuator/health/readiness | grep "status":"UP" || exit 1
+      interval: 10s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    <<: *microservice-base-config
+
+  accounts:
+    image: hanlynnaung7/account:v1
+    container_name: account-ms
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_APPLICATION_NAME: account
+    <<: *microservice-base-config
+
+  card:
+    image: hanlynnaung7/card:v1
+    container_name: cards-ms
+    ports:
+      - "9000:9000"
+    environment:
+      SPRING_APPLICATION_NAME: card
+    <<: *microservice-base-config
+
+  loan:
+    image: hanlynnaung7/loan:v1
+    container_name: loans-ms
+    ports:
+      - "8090:8090"
+    environment:
+      SPRING_APPLICATION_NAME: loan
+    <<: *microservice-base-config
+
+networks:
+  eazybank:
+    driver: bridge

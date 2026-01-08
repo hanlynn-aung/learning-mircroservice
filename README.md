@@ -173,13 +173,15 @@ mvn compile jib:dockerBuild -Dimage=hanlynnaung7/card:v1
 docker run -p 9000:9000 hanlynnaung7/card:v1
 ```
 
-### Docker Compose (Recommended for Local Development)
+## 🐳 Docker Compose
 
-To run all services with a single command using Docker Compose:
+This project includes Docker Compose configurations for different environments (development, production) to simplify local development and deployment.
+
+### Quick Start
 
 ```bash
-# Navigate to the account directory containing docker-compose.yaml
-cd account
+# Navigate to the docker-compose directory
+cd docker-compose/default
 
 # Start all services in detached mode
 docker-compose up -d
@@ -194,10 +196,19 @@ docker-compose logs -f
 docker-compose down
 ```
 
-**Features:**
-- All services (Accounts, Card, Loan) run in isolated containers
-- Dedicated bridge network `eazybank` for inter-service communication
-- Memory limits set to 700MB per service
+### Environment Configurations
+
+- **Default**: Basic setup for local development
+- **Development**: Enhanced for development with additional debugging tools
+- **Production**: Optimized for production use
+
+### Key Features
+- All services (Accounts, Card, Loan, Config Server, RabbitMQ) in isolated containers
+- Dedicated bridge network `eazybank` for secure inter-service communication
+- Resource limits and health checks for reliability
+- Environment-specific configuration support
+
+For detailed documentation, see the [docker-compose README](./docker-compose/README.md)
 - Ports exposed: 8080 (Accounts), 8090 (Loan), 9000 (Card)
 
 ## 🧪 Testing
