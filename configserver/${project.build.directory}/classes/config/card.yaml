@@ -1,0 +1,11 @@
+build:
+  version: "3.0"
+
+cards:
+  message: "Welcome to EazyBank card related Local APIs "
+  contactDetails:
+    name: "Natrix - Developer"
+    email: "natrix@eazybank.com"
+  onCallSupport:
+    - (959) 427778544
+    - (959) 427778555

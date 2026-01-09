@@ -1,63 +1,65 @@
 version: "3.9"
 
-# Reusable base configurations using anchors
+# -------------------------
+# Reusable anchors
+# -------------------------
 x-network-deploy-service: &network-deploy-service
   networks:
     - eazybank
 
+x-microservice-db-config: &microservice-db-config
+  <<: *network-deploy-service
+  image: mysql:8.0
+  environment:
+    MYSQL_ROOT_PASSWORD: root
+  healthcheck:
+    test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+    interval: 10s
+    timeout: 5s
+    retries: 5
+    start_period: 5s
+
 x-microservice-base-config: &microservice-base-config
   <<: *network-deploy-service
-  mem_limit: 700m
+  deploy:
+    resources:
+      limits:
+        memory: 700m
 
+# -------------------------
+# Services
+# -------------------------
 services:
+  # -------------------------
+  # Databases
+  # -------------------------
   accountsdb:
-    image: mysql
+    <<: *microservice-db-config
     container_name: accountsdb
     ports:
-      - 3306:3306
-    healthcheck:
-      test: ["CMD","mysqladmin","ping","-h","localhost"]
-      timeout: 10s
-      interval: 10s
-      retries: 3
-      start_period: 5s
+      - "3306:3306"
     environment:
-      MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: accountsdb
-    <<: *microservice-base-config
 
   cardsdb:
-    image: mysql
+    <<: *microservice-db-config
     container_name: cardsdb
     ports:
-      - 3307:3306
-    healthcheck:
-      test: [ "CMD","mysqladmin","ping","-h","localhost" ]
-      timeout: 10s
-      interval: 10s
-      retries: 3
-      start_period: 5s
+      - "3307:3306"
     environment:
-      MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: cardsdb
-    <<: *microservice-base-config
 
   loansdb:
-    image: mysql
+    <<: *microservice-db-config
     container_name: loansdb
     ports:
-      - 3308:3306
-    healthcheck:
-      test: [ "CMD","mysqladmin","ping","-h","localhost" ]
-      timeout: 10s
-      interval: 10s
-      retries: 3
-      start_period: 5s
+      - "3308:3306"
     environment:
-      MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: loansdb
-    <<: *microservice-base-config
 
+  # -------------------------
+  # RabbitMQ
+  # -------------------------
   rabbit:
     image: rabbitmq:3.12-management-alpine
     hostname: rabbitmq
@@ -65,8 +67,8 @@ services:
       - "5672:5672"
       - "15672:15672"
     environment:
-      - RABBITMQ_DEFAULT_USER=guest
-      - RABBITMQ_DEFAULT_PASS=guest
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
     healthcheck:
       test: rabbitmq-diagnostics check_port_connectivity
       interval: 10s
@@ -75,6 +77,9 @@ services:
       start_period: 5s
     <<: *microservice-base-config
 
+  # -------------------------
+  # Config Server
+  # -------------------------
   configserver:
     image: hanlynnaung7/configserver:v1
     container_name: configserver-ms
@@ -84,13 +89,16 @@ services:
       rabbit:
         condition: service_healthy
     healthcheck:
-      test: curl --fail --silent http://localhost:8071/actuator/health/readiness | grep "status":"UP" || exit 1
+      test: curl --fail --silent http://localhost:8071/actuator/health/readiness | grep "status\":\"UP\" || exit 1
       interval: 10s
       timeout: 10s
       retries: 3
       start_period: 10s
     <<: *microservice-base-config
 
+  # -------------------------
+  # Microservices
+  # -------------------------
   accounts:
     image: hanlynnaung7/account:v1
     container_name: account-ms
@@ -111,7 +119,7 @@ services:
       - "9000:9000"
     environment:
       SPRING_APPLICATION_NAME: card
-      SPRING_DATASOURCE_URL: jdbc:mysql://cardsdb:3307/cardsdb
+      SPRING_DATASOURCE_URL: jdbc:mysql://cardsdb:3306/cardsdb
     depends_on:
       cardsdb:
         condition: service_healthy
@@ -124,12 +132,15 @@ services:
       - "8090:8090"
     environment:
       SPRING_APPLICATION_NAME: loan
-      SPRING_DATASOURCE_URL: jdbc:mysql://loansdb:3308/loansdb
+      SPRING_DATASOURCE_URL: jdbc:mysql://loansdb:3306/loansdb
     depends_on:
       loansdb:
         condition: service_healthy
     <<: *microservice-base-config
 
+# -------------------------
+# Networks
+# -------------------------
 networks:
   eazybank:
     driver: bridge
