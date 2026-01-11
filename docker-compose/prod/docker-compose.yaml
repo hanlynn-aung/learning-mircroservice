@@ -5,11 +5,49 @@ x-network-deploy-service: &network-deploy-service
   networks:
     - eazybank
 
+x-microservice-db-config: &microservice-db-config
+  <<: *network-deploy-service
+  image: mysql:8.0
+  environment:
+    MYSQL_ROOT_PASSWORD: root
+  healthcheck:
+    test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+    interval: 10s
+    timeout: 5s
+    retries: 5
+    start_period: 5s
+
 x-microservice-base-config: &microservice-base-config
   <<: *network-deploy-service
-  mem_limit: 700m
+  deploy:
+    resources:
+      limits:
+        memory: 700m
 
 services:
+  accountsdb:
+    <<: *microservice-db-config
+    container_name: accountsdb
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_DATABASE: accountsdb
+
+  cardsdb:
+    <<: *microservice-db-config
+    container_name: cardsdb
+    ports:
+      - "3307:3306"
+    environment:
+      MYSQL_DATABASE: cardsdb
+
+  loansdb:
+    <<: *microservice-db-config
+    container_name: loansdb
+    ports:
+      - "3308:3306"
+    environment:
+      MYSQL_DATABASE: loansdb
   rabbit:
     image: rabbitmq:3.12-management-alpine
     hostname: rabbitmq
