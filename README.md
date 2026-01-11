@@ -5,12 +5,15 @@ A modern banking platform built with Spring Boot 4.0.1 and Java 21, following mi
 
 ## 🚀 Services
 
-| Service                | Port | Description |
-|------------------------|------|-------------|
-| Accounts              | 8080 | Customer account management |
-| Loan                  | 8090 | Loan processing system |
-| Card                  | 9000 | Card management system |
-| Config Server         | 8888 | Centralized configuration |
+| Service                | Port  | Description |
+|------------------------|-------|-------------|
+| Accounts              | 8080  | Customer account management |
+| MySQL (Accounts DB)   | 3306  | Accounts service database |
+| MySQL (Cards DB)      | 3307  | Cards service database |
+| MySQL (Loans DB)      | 3308  | Loans service database |
+| Loan                  | 8090  | Loan processing system |
+| Card                  | 9000  | Card management system |
+| Config Server         | 8071  | Centralized configuration |
 | RabbitMQ Management   | 15672 | Message broker dashboard |
 
 ## 🛠 Tech Stack
@@ -28,7 +31,6 @@ A modern banking platform built with Spring Boot 4.0.1 and Java 21, following mi
 - **Spring Cloud Config** (for centralized configuration)
 - **Spring Cloud Bus** (with RabbitMQ)
 - **Spring Data JPA**
-- **H2 Database** (in-memory)
 - **SpringDoc OpenAPI 2.8.5**
 - **Lombok**
 - **Maven**
@@ -40,7 +42,7 @@ A modern banking platform built with Spring Boot 4.0.1 and Java 21, following mi
 
 ### Configuration Management
 - **Spring Cloud Config Server**
-  - Port: 8888
+  - Port: 8071
   - Git-based configuration
   - Automatic refresh with Spring Cloud Bus
 
@@ -228,13 +230,6 @@ microservice-accounts-project/
 └── card/             # Card microservice
 ```
 
-### Database
-- **H2 Console**: http://localhost:<port>/h2-console
-- **JDBC URL**: `jdbc:h2:mem:testdb`
-- **Username**: `sa`
-- **Password**: (leave empty)
-
 ## 📝 Notes
 - Each service is independently deployable
-- Services use in-memory H2 database by default
 - API versioning follows RESTful best practices
